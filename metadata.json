@@ -1,0 +1,5 @@
+{
+  "name": "FTTH Power Dashboard",
+  "description": "A comprehensive dashboard for monitoring FTTH power management, team utilization, and equipment performance metrics.",
+  "requestFramePermissions": []
+}
