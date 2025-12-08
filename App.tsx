@@ -2,13 +2,22 @@ import React, { useState, useMemo } from 'react';
 import { TabType } from './types';
 import SectionPower from './components/SectionPower';
 import SectionTeam from './components/SectionTeam';
-import { getDashboardData, periodOptions } from './constants';
+import { getDashboardData, periodGroups } from './constants';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('power');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('current');
 
   const dashboardData = useMemo(() => getDashboardData(selectedPeriod), [selectedPeriod]);
+
+  // Find label for header
+  const currentLabel = useMemo(() => {
+    for (const group of periodGroups) {
+      const option = group.options.find(opt => opt.id === selectedPeriod);
+      if (option) return option.label;
+    }
+    return '';
+  }, [selectedPeriod]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white p-4 md:p-8 font-sans">
@@ -20,17 +29,22 @@ const App: React.FC = () => {
               <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
                 FTTH Power Management Dashboard
               </h1>
+              <p className="text-gray-400 mt-2 text-sm font-medium">Data Period: <span className="text-gray-300">{currentLabel}</span></p>
               <div className="flex items-center gap-3 mt-3">
                  <div className="relative">
                     <select 
                         value={selectedPeriod}
                         onChange={(e) => setSelectedPeriod(e.target.value)}
-                        className="appearance-none bg-white/5 border border-white/20 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-8 cursor-pointer hover:bg-white/10 transition-colors"
+                        className="appearance-none bg-white/5 border border-white/20 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-8 cursor-pointer hover:bg-white/10 transition-colors min-w-[280px]"
                     >
-                        {periodOptions.map(option => (
-                            <option key={option.id} value={option.id} className="bg-slate-800 text-white">
-                                {option.label}
-                            </option>
+                        {periodGroups.map((group) => (
+                            <optgroup key={group.label} label={group.label} className="bg-slate-800 text-gray-400 font-semibold">
+                                {group.options.map(option => (
+                                    <option key={option.id} value={option.id} className="bg-slate-800 text-white font-normal pl-4">
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </optgroup>
                         ))}
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
@@ -38,7 +52,7 @@ const App: React.FC = () => {
                     </div>
                  </div>
                  {dashboardData.isProjected && (
-                     <span className="bg-purple-500/20 text-purple-300 text-xs font-semibold px-2.5 py-0.5 rounded border border-purple-500/30 uppercase tracking-wider">
+                     <span className="bg-purple-500/20 text-purple-300 text-xs font-semibold px-2.5 py-0.5 rounded border border-purple-500/30 uppercase tracking-wider whitespace-nowrap">
                          Projected Data
                      </span>
                  )}

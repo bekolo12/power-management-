@@ -1,6 +1,6 @@
 import { Technician, ChartDataPoint, TeamLeader, RootCause, DashboardData } from './types';
 
-// --- Base Data (The Real Data) ---
+// --- Base Data (Week 1: Oct 12 - Nov 8) ---
 
 const taskDistributionData: ChartDataPoint[] = [
   { name: 'Preventive', value: 175, fill: '#10b981' },
@@ -53,7 +53,7 @@ const ratioData: ChartDataPoint[] = [
   { name: 'Other', value: 13, fill: '#8b5cf6' },
 ];
 
-// Team Section Data
+// Team Section Data Week 1
 const efficiencyData: ChartDataPoint[] = [
   { name: 'لؤي حازم', value: 3 },
   { name: 'محمد عدي', value: 1 },
@@ -120,6 +120,118 @@ const baseMetrics = {
     preventiveRatio: 67
 };
 
+// --- Week 2 Data (Nov 16 - Nov 24) ---
+
+const taskDistributionDataW2: ChartDataPoint[] = [
+  { name: 'Preventive', value: 38, fill: '#10b981' },
+  { name: 'Corrective', value: 15, fill: '#ef4444' },
+  { name: 'Dev/New', value: 0, fill: '#8b5cf6' },
+];
+
+const equipmentFailuresDataW2: ChartDataPoint[] = [
+  { name: 'Repeater Gen', value: 8 }, // مولد ربيتر
+  { name: 'UPS', value: 6 },
+  { name: 'Splitter', value: 5 },
+  { name: 'Power Sensor', value: 4 },
+  { name: 'Generator', value: 3 },
+  { name: 'Switch', value: 3 },
+  { name: 'Router', value: 2 },
+  { name: 'Inverter', value: 2 },
+  { name: 'Battery', value: 2 },
+  { name: 'Cable', value: 1 },
+];
+
+const dailyDistributionDataW2: ChartDataPoint[] = [
+  { name: 'Sun', value: 2 },
+  { name: 'Mon', value: 8 },
+  { name: 'Tue', value: 9 },
+  { name: 'Wed', value: 11 },
+  { name: 'Thu', value: 10 },
+  { name: 'Fri', value: 8 },
+  { name: 'Sat', value: 5 },
+];
+
+const hourlyDistributionDataW2: ChartDataPoint[] = [
+  { name: '8', value: 3 },
+  { name: '9', value: 5 },
+  { name: '10', value: 7 },
+  { name: '11', value: 6 },
+  { name: '12', value: 4 },
+  { name: '13', value: 5 },
+  { name: '14', value: 8 },
+  { name: '15', value: 6 },
+  { name: '16', value: 4 },
+  { name: '17', value: 3 },
+  { name: '18', value: 2 },
+  { name: '19', value: 0 },
+  { name: '20', value: 0 },
+];
+
+const ratioDataW2: ChartDataPoint[] = [
+  { name: 'Preventive', value: 72, fill: '#10b981' },
+  { name: 'Corrective', value: 28, fill: '#ef4444' },
+  { name: 'Other', value: 0, fill: '#8b5cf6' },
+];
+
+const efficiencyDataW2: ChartDataPoint[] = [
+  { name: 'ذو الفقار فاضل طه', value: 3 },
+  { name: 'لؤي حازم', value: 2 },
+  { name: 'محمد عدي', value: 2 },
+];
+
+const techTaskCountDataW2: ChartDataPoint[] = [
+    { name: 'Ahmed H.', value: 9, value2: 3 },
+    { name: 'محمد علي', value: 8, value2: 2 },
+    { name: 'علي أحمد', value: 4, value2: 4 },
+    { name: 'سعد محمود', value: 5, value2: 2 },
+    { name: 'حسن أحمد', value: 5, value2: 1 },
+    { name: 'خالد محمد', value: 3, value2: 2 },
+    { name: 'محمود أحمد', value: 2, value2: 1 },
+    { name: 'فاضل طه', value: 2, value2: 0 },
+];
+
+const techniciansW2: Technician[] = [
+  { name: 'Ahmed Hekmat Ahmed', leader: 'ذو الفقار فاضل طه', total: 12, corrective: 3, preventive: 9, avg: 86, efficiency: 3 },
+  { name: 'محمد علي حسن', leader: 'ذو الفقار فاضل طه', total: 10, corrective: 2, preventive: 8, avg: 92, efficiency: 2 },
+  { name: 'علي أحمد محمد', leader: 'لؤي حازم', total: 8, corrective: 4, preventive: 4, avg: 116, efficiency: 2 },
+  { name: 'سعد محمود عبدالله', leader: 'محمد عدي', total: 7, corrective: 2, preventive: 5, avg: 78, efficiency: 3 },
+  { name: 'حسن أحمد علي', leader: 'لؤي حازم', total: 6, corrective: 1, preventive: 5, avg: 96, efficiency: 2 },
+  { name: 'خالد محمد يوسف', leader: 'محمد عدي', total: 5, corrective: 2, preventive: 3, avg: 102, efficiency: 1 },
+  { name: 'محمود أحمد حسن', leader: 'ذو الفقار فاضل طه', total: 3, corrective: 1, preventive: 2, avg: 89, efficiency: 2 },
+  { name: 'فاضل طه ذو الفقار', leader: '-', total: 2, corrective: 0, preventive: 2, avg: 75, efficiency: 3 },
+];
+
+const rootCausesW2: RootCause[] = [
+  { name: 'صيانة دورية', count: 12, color: 'text-green-400', bg: 'bg-green-500/20' },
+  { name: 'انقطاع مصدر', count: 8, color: 'text-red-400', bg: 'bg-red-500/20' },
+  { name: 'ارتفاع درجة الحرارة', count: 6, color: 'text-yellow-400', bg: 'bg-yellow-500/20' },
+  { name: 'عطل في المولد', count: 5, color: 'text-red-400', bg: 'bg-red-500/20' },
+  { name: 'مشكلة في البطارية', count: 4, color: 'text-yellow-400', bg: 'bg-yellow-500/20' },
+  { name: 'قطع في الكابل', count: 3, color: 'text-yellow-400', bg: 'bg-yellow-500/20' },
+  { name: 'مشكلة في المحول', count: 3, color: 'text-yellow-400', bg: 'bg-yellow-500/20' },
+  { name: 'تلف في الجهاز', count: 2, color: 'text-green-400', bg: 'bg-green-500/20' },
+  { name: 'مشكلة في الشبكة', count: 2, color: 'text-green-400', bg: 'bg-green-500/20' },
+  { name: 'انقطاع التيار', count: 2, color: 'text-green-400', bg: 'bg-green-500/20' },
+];
+
+const teamLeadersW2: TeamLeader[] = [
+    { name: 'ذو الفقار فاضل طه', tasks: 27, percentage: 51, corrective: 6, preventive: 21, dev: 0, hours: 39, avg: 86, eff: 3 },
+    { name: 'لؤي حازم', tasks: 14, percentage: 26, corrective: 5, preventive: 9, dev: 0, hours: 24, avg: 104, eff: 2 },
+    { name: 'محمد عدي', tasks: 12, percentage: 23, corrective: 4, preventive: 8, dev: 0, hours: 18, avg: 91, eff: 2 },
+];
+
+const baseMetricsW2 = {
+    totalRecords: 53,
+    tasksPerDay: 7,
+    totalWorkHours: 85,
+    avgDuration: 97,
+    avgResponseTime: 3,
+    medianResponse: 2,
+    maxResponse: 24,
+    preventiveRatio: 72
+};
+
+
 // --- Helper for generating projected data ---
 const fuzz = (value: number, factor = 0.2) => {
     const change = value * factor * (Math.random() - 0.5);
@@ -130,9 +242,10 @@ const fuzz = (value: number, factor = 0.2) => {
 // --- Data Selector Function ---
 
 export const getDashboardData = (periodId: string): DashboardData => {
-  const isReal = periodId === 'current';
+  const isCurrent = periodId === 'current';
+  const isWeek2 = periodId === 'nov_16_24';
   
-  if (isReal) {
+  if (isCurrent) {
       return {
           taskDistributionData,
           equipmentFailuresData,
@@ -149,10 +262,24 @@ export const getDashboardData = (periodId: string): DashboardData => {
       };
   }
 
+  if (isWeek2) {
+      return {
+          taskDistributionData: taskDistributionDataW2,
+          equipmentFailuresData: equipmentFailuresDataW2,
+          dailyDistributionData: dailyDistributionDataW2,
+          hourlyDistributionData: hourlyDistributionDataW2,
+          ratioData: ratioDataW2,
+          efficiencyData: efficiencyDataW2,
+          techTaskCountData: techTaskCountDataW2,
+          technicians: techniciansW2,
+          rootCauses: rootCausesW2,
+          teamLeaders: teamLeadersW2,
+          isProjected: false,
+          metrics: baseMetricsW2
+      };
+  }
+
   // Generate randomized "Projected" data for other months
-  // We use the periodId as a pseudo-seed to make it consistent within session if possible,
-  // but Math.random is sufficient for this mock.
-  
   return {
     taskDistributionData: taskDistributionData.map(d => ({ ...d, value: fuzz(d.value) })),
     equipmentFailuresData: equipmentFailuresData.map(d => ({ ...d, value: fuzz(d.value) })),
@@ -195,17 +322,28 @@ export const getDashboardData = (periodId: string): DashboardData => {
   };
 };
 
-export const periodOptions = [
-    { id: '1', label: 'January 2025' },
-    { id: '2', label: 'February 2025' },
-    { id: '3', label: 'March 2025' },
-    { id: '4', label: 'April 2025' },
-    { id: '5', label: 'May 2025' },
-    { id: '6', label: 'June 2025' },
-    { id: '7', label: 'July 2025' },
-    { id: '8', label: 'August 2025' },
-    { id: '9', label: 'September 2025' },
-    { id: '10', label: 'October 2025' },
-    { id: 'current', label: 'october 10/12/2025 till november 11/8/2025' },
-    { id: '11', label: 'November 2025' },
+export const periodGroups = [
+  {
+    label: 'Months',
+    options: [
+        { id: '1', label: 'January 2025' },
+        { id: '2', label: 'February 2025' },
+        { id: '3', label: 'March 2025' },
+        { id: '4', label: 'April 2025' },
+        { id: '5', label: 'May 2025' },
+        { id: '6', label: 'June 2025' },
+        { id: '7', label: 'July 2025' },
+        { id: '8', label: 'August 2025' },
+        { id: '9', label: 'September 2025' },
+        { id: '10', label: 'October 2025' },
+        { id: '11', label: 'November 2025' },
+    ]
+  },
+  {
+    label: 'Weeks',
+    options: [
+        { id: 'current', label: 'October 12, 2025 - November 8, 2025' },
+        { id: 'nov_16_24', label: 'November 16, 2025 - November 24, 2025' }
+    ]
+  }
 ];
