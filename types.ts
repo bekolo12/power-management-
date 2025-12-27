@@ -41,7 +41,7 @@ export interface KeyMetric {
   icon: string;
 }
 
-export type TabType = 'power' | 'team';
+export type TabType = 'power' | 'team' | 'census';
 
 export interface DashboardData {
   taskDistributionData: ChartDataPoint[];
@@ -64,5 +64,6 @@ export interface DashboardData {
     medianResponse: number;
     maxResponse: number;
     preventiveRatio: number;
+    teamCount: number;
   };
 }

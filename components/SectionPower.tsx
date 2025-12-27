@@ -16,11 +16,12 @@ const SectionPower: React.FC<SectionPowerProps> = ({ data }) => {
   return (
     <div className="animate-fade-in">
       {/* Key Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
         <StatCard label="Total Records" value={metrics.totalRecords} icon="📊" />
         <StatCard label="Tasks Per Day" value={metrics.tasksPerDay} icon="📈" />
         <StatCard label="Total Work Hours" value={metrics.totalWorkHours} icon="⏱️" />
         <StatCard label="Avg Duration" value={metrics.avgDuration} unit="min" icon="⏰" />
+        <StatCard label="Team Members" value={metrics.teamCount} icon="👥" />
       </div>
 
       {/* Row 1: Distribution & Failures */}

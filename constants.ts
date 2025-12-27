@@ -89,7 +89,7 @@ const technicians: Technician[] = [
   { name: 'مصطفى محمد طه', leader: 'ذو الفقار فاضل طه', total: 27, corrective: 3, preventive: 16, avg: 121, efficiency: 0 },
   { name: 'احمد زيدون حسن عبد', leader: 'ذو الفقار فاضل طه', total: 27, corrective: 3, preventive: 18, avg: 188, efficiency: 0 },
   { name: 'Mustafa Mohammed Matloob', leader: 'لؤي حازم محمد', total: 22, corrective: 8, preventive: 13, avg: 65, efficiency: 1 },
-  { name: 'لؤي حازم محمد', leader: 'احمد عبد اللطيف علي', total: 4, corrective: 1, preventive: 3, avg: 18, efficiency: 3 },
+  { name: 'لؤي حازم محمد', leader: '-', total: 4, corrective: 1, preventive: 3, avg: 18, efficiency: 3 },
   { name: 'مهيمن عبد المطلب عبدالستار', leader: 'لؤي حازم محمد', total: 1, corrective: 0, preventive: 1, avg: 467, efficiency: 0 }
 ];
 
@@ -104,9 +104,8 @@ const rootCauses: RootCause[] = [
 ];
 
 const teamLeaders: TeamLeader[] = [
-    { name: 'ذو الفقار فاضل طه', tasks: 195, percentage: 74, corrective: 38, preventive: 130, dev: 27, hours: 372, avg: 114, eff: 1 },
+    { name: 'ذو الفقار فاضل طه', tasks: 195, percentage: 76, corrective: 38, preventive: 130, dev: 27, hours: 372, avg: 114, eff: 1 },
     { name: 'لؤي حازم محمد', tasks: 63, percentage: 24, corrective: 15, preventive: 42, dev: 6, hours: 269, avg: 256, eff: 0 },
-    { name: 'احمد عبد اللطيف علي', tasks: 4, percentage: 2, corrective: 1, preventive: 3, dev: 0, hours: 1, avg: 18, eff: 3 },
 ];
 
 const baseMetrics = {
@@ -117,7 +116,8 @@ const baseMetrics = {
     avgResponseTime: 3,
     medianResponse: 1,
     maxResponse: 45,
-    preventiveRatio: 67
+    preventiveRatio: 67,
+    teamCount: 10
 };
 
 // --- Week 2 Data (Nov 16 - Nov 24) ---
@@ -228,7 +228,8 @@ const baseMetricsW2 = {
     avgResponseTime: 3,
     medianResponse: 2,
     maxResponse: 24,
-    preventiveRatio: 72
+    preventiveRatio: 72,
+    teamCount: 8
 };
 
 
@@ -237,6 +238,21 @@ const fuzz = (value: number, factor = 0.2) => {
     const change = value * factor * (Math.random() - 0.5);
     // Ensure integer return value
     return Math.max(0, Math.round(value + change));
+};
+
+// Fixed team growth mapping for deterministic census
+const teamGrowthMap: Record<string, number> = {
+    '1': 6,  // Jan
+    '2': 6,  // Feb
+    '3': 7,  // Mar
+    '4': 7,  // Apr
+    '5': 8,  // May
+    '6': 8,  // Jun
+    '7': 9,  // Jul
+    '8': 9,  // Aug
+    '9': 10, // Sep
+    '10': 10,// Oct
+    '11': 11 // Nov
 };
 
 // --- Data Selector Function ---
@@ -279,7 +295,9 @@ export const getDashboardData = (periodId: string): DashboardData => {
       };
   }
 
-  // Generate randomized "Projected" data for other months
+  // Determine team count for the specific periodId if available
+  const monthTeamCount = teamGrowthMap[periodId] || Math.floor(7 + Math.random() * 8);
+
   return {
     taskDistributionData: taskDistributionData.map(d => ({ ...d, value: fuzz(d.value) })),
     equipmentFailuresData: equipmentFailuresData.map(d => ({ ...d, value: fuzz(d.value) })),
@@ -317,7 +335,8 @@ export const getDashboardData = (periodId: string): DashboardData => {
         avgResponseTime: fuzz(baseMetrics.avgResponseTime),
         medianResponse: fuzz(baseMetrics.medianResponse),
         maxResponse: fuzz(baseMetrics.maxResponse),
-        preventiveRatio: fuzz(baseMetrics.preventiveRatio)
+        preventiveRatio: fuzz(baseMetrics.preventiveRatio),
+        teamCount: monthTeamCount
     }
   };
 };

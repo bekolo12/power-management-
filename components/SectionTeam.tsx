@@ -183,10 +183,6 @@ const SectionTeam: React.FC<SectionTeamProps> = ({ data }) => {
             <h4 className="text-lg font-semibold mt-6 mb-3 text-green-400">🌟 High Performers</h4>
             <div className="space-y-2">
                 <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 flex justify-between items-center">
-                    <span className="text-gray-200">احمد عبد اللطيف علي</span>
-                    <span className="text-green-400 font-bold">Score: 3</span>
-                </div>
-                <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 flex justify-between items-center">
                     <span className="text-gray-200">ذو الفقار فاضل طه</span>
                     <span className="text-green-400 font-bold">Score: 1</span>
                 </div>
