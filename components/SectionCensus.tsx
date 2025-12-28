@@ -10,9 +10,14 @@ const SectionCensus: React.FC = () => {
   // Prepare data for the census table and trend chart
   const censusData = monthOptions.map(opt => {
     const data = getDashboardData(opt.id);
+    const avgTasksPerMember = data.metrics.teamCount > 0 
+      ? (data.metrics.tasksPerDay / data.metrics.teamCount) 
+      : 0;
+
     return {
       month: opt.label,
-      count: data.metrics.teamCount
+      count: data.metrics.teamCount,
+      avgLoad: avgTasksPerMember
     };
   });
 
@@ -30,26 +35,34 @@ const SectionCensus: React.FC = () => {
             <span className="text-indigo-400">📅</span> 2025 Team Census
           </h3>
           <div className="overflow-hidden rounded-xl border border-white/10">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-white/5 border-b border-white/10">
-                  <th className="py-4 px-6 text-gray-400 font-medium">Month</th>
-                  <th className="py-4 px-6 text-gray-400 font-medium text-right">Team Members</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {censusData.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-white/5 transition-colors group">
-                    <td className="py-4 px-6 text-gray-200 font-medium group-hover:text-blue-400">{row.month}</td>
-                    <td className="py-4 px-6 text-right">
-                      <span className="bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full text-sm font-bold border border-blue-500/20">
-                        {row.count}
-                      </span>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-white/5 border-b border-white/10">
+                    <th className="py-4 px-4 text-gray-400 font-medium text-xs uppercase tracking-wider">Month</th>
+                    <th className="py-4 px-4 text-gray-400 font-medium text-center text-xs uppercase tracking-wider">Members</th>
+                    <th className="py-4 px-4 text-gray-400 font-medium text-right text-xs uppercase tracking-wider">Avg Ticket/Member/Day</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {censusData.map((row, idx) => (
+                    <tr key={idx} className="hover:bg-white/5 transition-colors group">
+                      <td className="py-4 px-4 text-gray-200 font-medium group-hover:text-blue-400 text-sm whitespace-nowrap">{row.month}</td>
+                      <td className="py-4 px-4 text-center">
+                        <span className="bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full text-xs font-bold border border-blue-500/20">
+                          {row.count}
+                        </span>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <span className="text-emerald-400 font-bold text-sm">
+                          {row.avgLoad.toFixed(2)}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </GlassCard>
 
@@ -63,7 +76,7 @@ const SectionCensus: React.FC = () => {
           </div>
           <div className="mt-6 p-4 bg-blue-500/5 border border-blue-500/10 rounded-lg">
             <p className="text-gray-400 text-sm italic">
-              * The team size data for months without active reports is projected based on recruitment targets and historical attrition patterns.
+              * The team size and ticket data for months without active reports are projected based on historical patterns and seasonal growth forecasts.
             </p>
           </div>
         </GlassCard>
