@@ -129,7 +129,7 @@ const taskDistributionDataW2: ChartDataPoint[] = [
 ];
 
 const equipmentFailuresDataW2: ChartDataPoint[] = [
-  { name: 'Repeater Gen', value: 8 }, // مولد ربيتر
+  { name: 'Repeater Gen', value: 8 },
   { name: 'UPS', value: 6 },
   { name: 'Splitter', value: 5 },
   { name: 'Power Sensor', value: 4 },
@@ -234,9 +234,10 @@ const baseMetricsW2 = {
 
 
 // --- Helper for generating projected data ---
-const fuzz = (value: number, factor = 0.2) => {
-    const change = value * factor * (Math.random() - 0.5);
-    // Ensure integer return value
+const fuzz = (value: number, factor = 0.2, seed?: number) => {
+    // Basic deterministic-ish fuzzing based on a seed (optional)
+    const random = seed ? (Math.sin(seed) + 1) / 2 : Math.random();
+    const change = value * factor * (random - 0.5);
     return Math.max(0, Math.round(value + change));
 };
 
@@ -258,6 +259,81 @@ const teamGrowthMap: Record<string, number> = {
 // --- Data Selector Function ---
 
 export const getDashboardData = (periodId: string): DashboardData => {
+  if (periodId === 'total_2025') {
+      // Aggregate data from all 11 months for a yearly summary
+      const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'];
+      const monthData = months.map(m => getDashboardData(m));
+      
+      const aggregate = {
+          taskDistributionData: [...taskDistributionData].map(d => ({ ...d, value: 0 })),
+          equipmentFailuresData: [...equipmentFailuresData].map(d => ({ ...d, value: 0 })),
+          dailyDistributionData: [...dailyDistributionData].map(d => ({ ...d, value: 0 })),
+          hourlyDistributionData: [...hourlyDistributionData].map(d => ({ ...d, value: 0 })),
+          metrics: { 
+              totalRecords: 0, 
+              tasksPerDay: 0, 
+              totalWorkHours: 0, 
+              avgDuration: 0, 
+              avgResponseTime: 0, 
+              medianResponse: 0, 
+              maxResponse: 0, 
+              preventiveRatio: 0, 
+              teamCount: 11 // Max census
+          }
+      };
+
+      monthData.forEach(m => {
+          aggregate.metrics.totalRecords += m.metrics.totalRecords;
+          aggregate.metrics.totalWorkHours += m.metrics.totalWorkHours;
+          aggregate.metrics.tasksPerDay += m.metrics.tasksPerDay;
+          aggregate.metrics.avgDuration += m.metrics.avgDuration;
+          aggregate.metrics.avgResponseTime += m.metrics.avgResponseTime;
+          aggregate.metrics.medianResponse += m.metrics.medianResponse;
+          aggregate.metrics.maxResponse = Math.max(aggregate.metrics.maxResponse, m.metrics.maxResponse);
+          aggregate.metrics.preventiveRatio += m.metrics.preventiveRatio;
+
+          m.taskDistributionData.forEach(td => {
+              const target = aggregate.taskDistributionData.find(atd => atd.name === td.name);
+              if (target) target.value += td.value;
+          });
+          m.equipmentFailuresData.forEach(ef => {
+              const target = aggregate.equipmentFailuresData.find(aef => aef.name === ef.name);
+              if (target) target.value += ef.value;
+          });
+          m.dailyDistributionData.forEach(dd => {
+              const target = aggregate.dailyDistributionData.find(add => add.name === dd.name);
+              if (target) target.value += dd.value;
+          });
+          m.hourlyDistributionData.forEach(hd => {
+              const target = aggregate.hourlyDistributionData.find(ahd => ahd.name === hd.name);
+              if (target) target.value += hd.value;
+          });
+      });
+
+      // Simple averages for rate-based metrics
+      aggregate.metrics.tasksPerDay = Math.round(aggregate.metrics.tasksPerDay / months.length);
+      aggregate.metrics.avgDuration = Math.round(aggregate.metrics.avgDuration / months.length);
+      aggregate.metrics.avgResponseTime = Math.round(aggregate.metrics.avgResponseTime / months.length);
+      aggregate.metrics.medianResponse = Math.round(aggregate.metrics.medianResponse / months.length);
+      aggregate.metrics.preventiveRatio = Math.round(aggregate.metrics.preventiveRatio / months.length);
+
+      // Return aggregated yearly data
+      return {
+          ...aggregate,
+          ratioData: taskDistributionData.map(d => {
+              const totalVal = aggregate.taskDistributionData.find(td => td.name === d.name)?.value || 0;
+              const sum = aggregate.taskDistributionData.reduce((acc, curr) => acc + curr.value, 0);
+              return { ...d, value: Math.round((totalVal / sum) * 100) };
+          }),
+          efficiencyData: efficiencyData.map(e => ({ ...e, value: fuzz(e.value, 0.1, 999) })),
+          techTaskCountData: techTaskCountData.map(t => ({ ...t, value: fuzz(t.value, 0.2, 888), value2: t.value2 ? fuzz(t.value2, 0.2, 777) : undefined })),
+          technicians: technicians.map(t => ({ ...t, total: fuzz(t.total, 0.3, 666) })),
+          rootCauses: rootCauses.map(r => ({ ...r, count: fuzz(r.count, 0.5, 555) })),
+          teamLeaders: teamLeaders.map(tl => ({ ...tl, tasks: fuzz(tl.tasks, 0.3, 444), percentage: tl.name.includes('ذو الفقار') ? 76 : 24 })),
+          isProjected: true
+      } as DashboardData;
+  }
+
   const isCurrent = periodId === 'current';
   const isWeek2 = periodId === 'nov_16_24';
   
@@ -296,52 +372,59 @@ export const getDashboardData = (periodId: string): DashboardData => {
   }
 
   // Determine team count for the specific periodId if available
-  const monthTeamCount = teamGrowthMap[periodId] || Math.floor(7 + Math.random() * 8);
+  const monthSeed = parseInt(periodId) || Math.random() * 1000;
+  const monthTeamCount = teamGrowthMap[periodId] || Math.floor(7 + fuzz(4, 0.5, monthSeed));
 
   return {
-    taskDistributionData: taskDistributionData.map(d => ({ ...d, value: fuzz(d.value) })),
-    equipmentFailuresData: equipmentFailuresData.map(d => ({ ...d, value: fuzz(d.value) })),
-    dailyDistributionData: dailyDistributionData.map(d => ({ ...d, value: fuzz(d.value) })),
-    hourlyDistributionData: hourlyDistributionData.map(d => ({ ...d, value: fuzz(d.value) })),
-    ratioData: ratioData.map(d => ({ ...d, value: fuzz(d.value, 0.1) })),
-    efficiencyData: efficiencyData.map(d => ({ ...d, value: fuzz(d.value, 0.3) })),
+    taskDistributionData: taskDistributionData.map(d => ({ ...d, value: fuzz(d.value, 0.2, monthSeed) })),
+    equipmentFailuresData: equipmentFailuresData.map(d => ({ ...d, value: fuzz(d.value, 0.2, monthSeed + 1) })),
+    dailyDistributionData: dailyDistributionData.map(d => ({ ...d, value: fuzz(d.value, 0.2, monthSeed + 2) })),
+    hourlyDistributionData: hourlyDistributionData.map(d => ({ ...d, value: fuzz(d.value, 0.2, monthSeed + 3) })),
+    ratioData: ratioData.map(d => ({ ...d, value: fuzz(d.value, 0.1, monthSeed + 4) })),
+    efficiencyData: efficiencyData.map(d => ({ ...d, value: fuzz(d.value, 0.3, monthSeed + 5) })),
     techTaskCountData: techTaskCountData.map(d => ({ 
         ...d, 
-        value: fuzz(d.value), 
-        value2: d.value2 ? fuzz(d.value2) : undefined 
+        value: fuzz(d.value, 0.2, monthSeed + 6), 
+        value2: d.value2 ? fuzz(d.value2, 0.2, monthSeed + 7) : undefined 
     })),
     technicians: technicians.map(t => ({
         ...t,
-        total: fuzz(t.total),
-        corrective: fuzz(t.corrective),
-        preventive: fuzz(t.preventive),
-        avg: fuzz(t.avg),
-        efficiency: fuzz(t.efficiency)
+        total: fuzz(t.total, 0.2, monthSeed + 8),
+        corrective: fuzz(t.corrective, 0.2, monthSeed + 9),
+        preventive: fuzz(t.preventive, 0.2, monthSeed + 10),
+        avg: fuzz(t.avg, 0.2, monthSeed + 11),
+        efficiency: fuzz(t.efficiency, 0.2, monthSeed + 12)
     })),
-    rootCauses: rootCauses.map(r => ({ ...r, count: fuzz(r.count) })),
+    rootCauses: rootCauses.map(r => ({ ...r, count: fuzz(r.count, 0.2, monthSeed + 13) })),
     teamLeaders: teamLeaders.map(tl => ({
         ...tl,
-        tasks: fuzz(tl.tasks),
-        hours: fuzz(tl.hours),
-        avg: fuzz(tl.avg),
-        eff: fuzz(tl.eff)
+        tasks: fuzz(tl.tasks, 0.2, monthSeed + 14),
+        hours: fuzz(tl.hours, 0.2, monthSeed + 15),
+        avg: fuzz(tl.avg, 0.2, monthSeed + 16),
+        eff: fuzz(tl.eff, 0.2, monthSeed + 17)
     })),
     isProjected: true,
     metrics: {
-        totalRecords: fuzz(baseMetrics.totalRecords),
-        tasksPerDay: fuzz(baseMetrics.tasksPerDay),
-        totalWorkHours: fuzz(baseMetrics.totalWorkHours),
-        avgDuration: fuzz(baseMetrics.avgDuration),
-        avgResponseTime: fuzz(baseMetrics.avgResponseTime),
-        medianResponse: fuzz(baseMetrics.medianResponse),
-        maxResponse: fuzz(baseMetrics.maxResponse),
-        preventiveRatio: fuzz(baseMetrics.preventiveRatio),
+        totalRecords: fuzz(baseMetrics.totalRecords, 0.2, monthSeed + 18),
+        tasksPerDay: fuzz(baseMetrics.tasksPerDay, 0.2, monthSeed + 19),
+        totalWorkHours: fuzz(baseMetrics.totalWorkHours, 0.2, monthSeed + 20),
+        avgDuration: fuzz(baseMetrics.avgDuration, 0.2, monthSeed + 21),
+        avgResponseTime: fuzz(baseMetrics.avgResponseTime, 0.2, monthSeed + 22),
+        medianResponse: fuzz(baseMetrics.medianResponse, 0.2, monthSeed + 23),
+        maxResponse: fuzz(baseMetrics.maxResponse, 0.2, monthSeed + 24),
+        preventiveRatio: fuzz(baseMetrics.preventiveRatio, 0.1, monthSeed + 25),
         teamCount: monthTeamCount
     }
   };
 };
 
 export const periodGroups = [
+  {
+    label: 'Overview',
+    options: [
+        { id: 'total_2025', label: 'Total Year 2025 (Estimated)' }
+    ]
+  },
   {
     label: 'Months',
     options: [
